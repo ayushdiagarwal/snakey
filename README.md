@@ -11,7 +11,7 @@ pip install pygame
 ## How to Run
 
 ```bash
-python snake_qlearning.py
+python snake.py
 ```
 
 Choose option 1 to train a new agent, or option 2 to watch a trained agent play.
