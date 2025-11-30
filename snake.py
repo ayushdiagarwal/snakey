@@ -157,7 +157,7 @@ class SnakeGame:
                 CELL_SIZE - 4
             ))
 
-def train_agent():
+def train_agent(demo_interval=None):
     print("Starting training...")
     game = SnakeGame()
     epsilon = EPSILON_START
@@ -201,6 +201,17 @@ def train_agent():
                   f"Avg(100): {avg_score:.2f} | "
                   f"Best: {best_score} | "
                   f"ε: {epsilon:.3f}")
+        
+        # Demo at interval
+        if demo_interval and (episode + 1) % demo_interval == 0:
+            print(f"\n--- Demo after {episode + 1} episodes ---")
+            demo_choice = input("Watch demo now? (y/n): ").strip().lower()
+            if demo_choice == 'y':
+                # Save current Q-table temporarily
+                with open('q_table.pkl', 'wb') as f:
+                    pickle.dump(game.q_table, f)
+                demo_agent()
+                print("\nResuming training...\n")
         
         # Check for plateau
         if (episode + 1) % CHECK_INTERVAL == 0 and episode > 0:
@@ -293,9 +304,17 @@ def main():
     choice = input("Enter choice (1 or 2): ").strip()
     
     if choice == '1':
-        train_agent()
+        demo_interval_choice = input("Watch demo every N episodes? (enter number or 0 for no demos): ").strip()
+        try:
+            demo_interval = int(demo_interval_choice)
+            if demo_interval <= 0:
+                demo_interval = None
+        except:
+            demo_interval = None
         
-        demo_choice = input("\nWatch demo? (y/n): ").strip().lower()
+        train_agent(demo_interval)
+        
+        demo_choice = input("\nWatch final demo? (y/n): ").strip().lower()
         if demo_choice == 'y':
             demo_agent()
     
